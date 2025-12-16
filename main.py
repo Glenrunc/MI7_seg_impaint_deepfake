@@ -355,7 +355,7 @@ if __name__ == "__main__":
         device=torch_device,
     )
 
-    image_de_qqn = "data/matteo.jpg"
+    image_de_qqn = "data/webcam_photo.jpg"
     human_to_recognize_enc = None
     if image_de_qqn is not None and isinstance(image_de_qqn, str):
         human_photo = fr.load_image_file(image_de_qqn)
@@ -363,9 +363,9 @@ if __name__ == "__main__":
     temp = human_to_recognize_enc
 
     # Image de fond prédéfinie (None pour utiliser la caméra)
-    background_image_path = None  # Ex: "data/background.jpg"
+    background_image_path = None
 
-    cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+    cap = cv2.VideoCapture(4, cv2.CAP_V4L2)
     rec = cv2.VideoWriter(
         f'output/output_{int(time.time())}.mp4',
         cv2.VideoWriter_fourcc(*"mp4v"),
@@ -382,7 +382,7 @@ if __name__ == "__main__":
 
     # État de l'inpainting
     inpainting_enabled = True
-    inpainting_mode = "lama"  # "lama" ou "basic"
+    inpainting_mode = "basic"  # "lama" ou "basic"
 
     # Afficher les contrôles au démarrage
     print("\n" + "=" * 60)
@@ -417,6 +417,7 @@ if __name__ == "__main__":
                 print("Erreur lors de la capture de l'image.")
                 exit()
 
+    # Logique principale: affichage et inpainting en temps réel pour chaque frame
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -450,7 +451,7 @@ if __name__ == "__main__":
         status_text = f"Inpainting: {'ON' if inpainting_enabled else 'OFF'}"
         if inpainting_enabled:
             status_text += f" ({inpainting_mode.upper()})"
-        status_text += f" | Face Recognition: {'ON' if human_to_recognize_enc is not None else 'OFF'}"
+        status_text += f" | Face Recognition: {f'ON {image_de_qqn}' if human_to_recognize_enc is not None else 'OFF'}"
 
         cv2.putText(
             frame,
